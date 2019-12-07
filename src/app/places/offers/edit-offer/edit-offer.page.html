@@ -1,0 +1,15 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <!-- <ion-back-button defaultHref="/places/tabs/offers"></ion-back-button> -->
+        <ion-back-button  [defaultHref]="['/places/tabs/offers/' + place.id]"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Edit Offer</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-item>{{ place.title }}</ion-item>
+  
+  <ion-content class="ion-padding">
+    <ion-button class="ion-margin" color="primary">Edit</ion-button>
+  </ion-content>
