@@ -17,7 +17,6 @@ export class PlaceDetailPage implements OnInit {
               private router: Router,
               private navCtrl: NavController,
               private placesService: PlacesService) { }
-
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('placeId')) {
