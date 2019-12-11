@@ -11,21 +11,27 @@ export class PlacesService {
       'Woolworth Building',
       'In the heart of New York City',
       'https://news.artnet.com/app/news-upload/2015/02/tom-baril-woolworth-building.jpg',
-      199.99
+      199.99,
+      new Date('2020-01-01'),
+      new Date('2020-12-31')
     ),
     new Place(
       'p2',
       'palazzo Massimo',
       'Museo Nazionale Romano',
       'https://govisity.com/wp-content/uploads/2018/07/National_Roman_Museum_-_Palazzo_Massimo_alle_Terme__Rome_Attractions__Best_Places_to_visit_in_Rome__Italy.jpg',
-      349.99
+      349.99,
+      new Date('2020-01-01'),
+      new Date('2020-12-31')
     ),
     new Place(
       'p3',
       'Victorian house',
       'Quaint place',
       'https://i.pinimg.com/originals/e8/b6/99/e8b6998f0299ab41fd2389daf2230812.png',
-      167.50
+      167.50,
+      new Date('2020-01-01'),
+      new Date('2020-12-31')
     )
   ];
 
