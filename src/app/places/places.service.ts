@@ -5,6 +5,7 @@ import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 
 import { Place } from './place.model';
 import { AuthService } from '../auth/auth.service';
+import { PlaceLocation } from './location.model';
 
 interface PlaceData {
   availableFrom: string;
@@ -14,6 +15,7 @@ interface PlaceData {
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 @Injectable({
@@ -47,7 +49,8 @@ export class PlacesService {
               responseData[key].price,
               new Date(responseData[key].availableFrom),
               new Date(responseData[key].availableTo),
-              responseData[key].userId
+              responseData[key].userId,
+              responseData[key].location
             )
           );
         }
@@ -73,7 +76,8 @@ export class PlacesService {
           placeData.price,
           new Date(placeData.availableFrom),
           new Date(placeData.availableTo),
-          placeData.userId
+          placeData.userId,
+          placeData.location
         );
      })
     );
@@ -83,7 +87,7 @@ export class PlacesService {
     // );
   }
 
-  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date) {
+  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date, location: PlaceLocation) {
     let generatedId: string;
     const newPlace = new Place(
       Math.random().toString(),
@@ -93,7 +97,8 @@ export class PlacesService {
       price,
       dateFrom,
       dateTo,
-      this.authService.userId
+      this.authService.userId,
+      location
     );
     return this.http.post<{name: string}>('https://ion-bnb.firebaseio.com/offered-places.json', { ...newPlace, id: null })
     .pipe(switchMap(responseData => {
@@ -132,7 +137,9 @@ export class PlacesService {
           oldPlace.price,
           oldPlace.availableFrom,
           oldPlace.availableTo,
-          oldPlace.userId
+          oldPlace.userId,
+          oldPlace.location
+
         );
         return this.http.put(`https://ion-bnb.firebaseio.com/offered-places/${placeId}.json`,
           { ...updatedPlaces[updatedPlaceIndex], id: null }

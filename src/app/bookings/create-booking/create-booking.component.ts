@@ -27,9 +27,7 @@ export class CreateBookingComponent implements OnInit {
         new Date(availableFrom.getTime() +  Math.random() * (availableTo.getTime()
                   - 7 * 24 * 60 * 60 * 1000 - availableFrom.getTime())).toISOString();
 
-      this.endDate =
-        new Date(new Date(this.startDate).getTime() + Math.random() * (new Date(this.startDate).getTime()
-         + 6 * 24 * 60 * 60 * 1000 - new Date(this.startDate).getTime())).toISOString();
+      this.endDate = new Date(new Date(this.startDate).getTime() + Math.random() * (6 * 24 * 60 * 60 * 1000)).toISOString();
     }
   }
 
@@ -47,7 +45,7 @@ export class CreateBookingComponent implements OnInit {
         lastName: this.form.value['last-name'],
         guestNumber: +this.form.value['guest-number'],
         startDate: new Date(this.form.value['date-from']),
-        endTo: new Date(this.form.value['date-to'])
+        endDate: new Date(this.form.value['date-to'])
       },
     }, 'confirm');
   }

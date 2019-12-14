@@ -2,8 +2,20 @@ import { Injectable } from '@angular/core';
 import { Booking } from './booking.model';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { take, delay, tap, switchMap } from 'rxjs/operators';
+import { take, delay, tap, switchMap, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+
+interface BookingData {
+  bookedFrom: string;
+  bookedTo: string;
+  firstName: string;
+  guestNumber: number;
+  lastName: string;
+  placeId: string;
+  placeImage: string;
+  placeTitle: string;
+  userId: string;
+}
 
 @Injectable({providedIn: 'root'})
 export class BookingService {
@@ -11,7 +23,7 @@ export class BookingService {
   private _bookings = new BehaviorSubject<Booking[]>([]);
 
   get bookings() { // getter returns an observable 'bookings' to which we can subscribe
-      return this._bookings.asObservable();
+    return this._bookings.asObservable();
   }
 
   constructor(private authService: AuthService,
@@ -55,12 +67,43 @@ export class BookingService {
 }
 
   cancelBooking(bookingId: string) {
-    return this.bookings.pipe(
-      take(1), delay(1000),
-      tap(bookings => {
-        this._bookings.next(bookings.filter(eachBooking => eachBooking.id !== bookingId));
-      })
-    );
+    return this.http.delete(`https://ion-bnb.firebaseio.com/bookings/${bookingId}.json`,
+    ).pipe(switchMap(() => {
+      return this.bookings; // locally update my bookings observable;
+    }),
+    take(1), // takes a snapshot, otherwise a loop: we return an observable (this.bookings)
+    // to which I have subscriptions elsewhere that make emit event .next which triggers  this.bookings again
+    tap(bookings => { // just a local variable for a list of bookings
+      this._bookings.next(bookings.filter(eachBooking => eachBooking.id !== bookingId));
+      console.log(this.bookings);
+    }));
   }
 
+  fetchBookings() {
+    return this.http.get<{ [key: string]: BookingData }>
+    (`https://ion-bnb.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${this.authService.userId}"`,
+    ).pipe(map(bookingData => {
+      const bookings = [];
+      for (const key in bookingData) {
+        if (bookingData.hasOwnProperty(key)) {
+          bookings.push(new Booking(
+            key,
+            bookingData[key].placeId,
+            bookingData[key].userId,
+            bookingData[key].placeTitle,
+            bookingData[key].placeImage,
+            bookingData[key].firstName,
+            bookingData[key].lastName,
+            bookingData[key].guestNumber,
+            new Date(bookingData[key].bookedFrom),
+            new Date(bookingData[key].bookedTo)
+        ));
+        }
+      }
+      return bookings;
+    }), tap(bookings => {
+        this._bookings.next(bookings);
+    })
+    );
+  }
 }
