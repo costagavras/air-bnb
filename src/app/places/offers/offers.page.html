@@ -23,6 +23,7 @@
           <ion-spinner color="primary"  *ngIf="isLoading"></ion-spinner>
           <ion-list *ngIf="!isLoading && offers.length > 0">
             <ion-item-sliding *ngFor="let offer of offers" #slidingItem >
+              <!-- loading the view with the single offer -->
               <app-offer-item [offer]="offer"></app-offer-item>
               <ion-item-options side="end">
                 <ion-item-option 

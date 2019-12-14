@@ -41,3 +41,15 @@
       </ion-row>
     </ion-grid>
   </ion-content>
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+        <ion-tab-button [routerLink]="['/', 'places', 'tabs', 'discover']">
+        <ion-label>Discover</ion-label>
+        <ion-icon name="search"></ion-icon>
+      </ion-tab-button>
+      <ion-tab-button [routerLink]="['/', 'places', 'tabs', 'offers']">
+        <ion-label>Offers</ion-label>
+        <ion-icon name="card"></ion-icon>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
