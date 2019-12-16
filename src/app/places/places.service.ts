@@ -89,19 +89,26 @@ export class PlacesService {
 
   addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date, location: PlaceLocation) {
     let generatedId: string;
-    const newPlace = new Place(
-      Math.random().toString(),
-      title,
-      description,
-      'https://i.pinimg.com/originals/e8/b6/99/e8b6998f0299ab41fd2389daf2230812.png',
-      price,
-      dateFrom,
-      dateTo,
-      this.authService.userId,
-      location
-    );
-    return this.http.post<{name: string}>('https://ion-bnb.firebaseio.com/offered-places.json', { ...newPlace, id: null })
-    .pipe(switchMap(responseData => {
+    let newPlace: Place;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userId => {
+      if (!userId) {
+        throw new Error('No user found');
+      }
+      newPlace = new Place(
+        Math.random().toString(),
+        title,
+        description,
+        'https://i.pinimg.com/originals/e8/b6/99/e8b6998f0299ab41fd2389daf2230812.png', // to change
+        price,
+        dateFrom,
+        dateTo,
+        userId,
+        location
+      );
+      return this.http.post<{name: string}>('https://ion-bnb.firebaseio.com/offered-places.json', { ...newPlace, id: null })
+    }), switchMap(responseData => {
         generatedId = responseData.name;
         return this.places;
       }),
@@ -109,7 +116,6 @@ export class PlacesService {
       tap(places => {
         newPlace.id = generatedId;
         this._places.next(places.concat(newPlace)); // emit new array (places concat a newPlace to it)
-
       })
     );
   }

@@ -58,7 +58,6 @@
           approxItemHeight="70px">
             <ion-item 
               [routerLink]="['/', 'places', 'tabs', 'discover', place.id]"
-              detail
               *virtualItem="let place">
               <ion-thumbnail slot="start">
                 <ion-img [src]="place.imageUrl"></ion-img>
