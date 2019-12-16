@@ -22,15 +22,18 @@ export class CreateBookingComponent implements OnInit {
   ngOnInit() {
     const availableFrom = new Date(this.selectedPlace.availableFrom);
     const availableTo = new Date(this.selectedPlace.availableTo);
+    const min = +this.selectedPlace.availableFrom;
+    const max = +this.selectedPlace.availableTo;
+    const week = 7 * 24 * 60 * 60 * 1000;
+
     if (this.selectedMode === 'random') {
       this.startDate =
         new Date(availableFrom.getTime() +  Math.random() * (availableTo.getTime()
-                  - 7 * 24 * 60 * 60 * 1000 - availableFrom.getTime())
+                  - week - availableFrom.getTime())
       ).toISOString();
 
       this.endDate = new Date(
-        new Date(this.startDate).getTime() + Math.random() * (new Date(this.startDate).getTime() +
-              6 * 24 * 60 * 60 * 1000 - new Date(this.startDate).getTime())
+        new Date(this.startDate).getTime() + Math.random() * week
       ).toISOString();
     }
   }
