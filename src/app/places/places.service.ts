@@ -87,7 +87,14 @@ export class PlacesService {
     // );
   }
 
-  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date, location: PlaceLocation) {
+  uploadImage(image: File) {
+    const uploadData = new FormData();
+    uploadData.append('image', image);
+
+    return this.http.post<{imageUrl: string, imagePath: string}>('https://us-central1-ion-bnb.cloudfunctions.net/storeImage', uploadData);
+  }
+
+  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date, location: PlaceLocation, imageUrl: string) {
     let generatedId: string;
     let newPlace: Place;
     return this.authService.userId.pipe(
@@ -100,7 +107,7 @@ export class PlacesService {
         Math.random().toString(),
         title,
         description,
-        'https://i.pinimg.com/originals/e8/b6/99/e8b6998f0299ab41fd2389daf2230812.png', // to change
+        imageUrl,
         price,
         dateFrom,
         dateTo,

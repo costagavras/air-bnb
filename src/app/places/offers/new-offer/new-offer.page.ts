@@ -5,6 +5,7 @@ import { LoadingController } from '@ionic/angular';
 
 import { PlacesService } from '../../places.service';
 import { PlaceLocation } from '../../location.model';
+import { switchMap } from 'rxjs/operators';
 
 function base64toBlob(base64Data, contentType) {
   contentType = contentType || '';
@@ -35,7 +36,7 @@ function base64toBlob(base64Data, contentType) {
 export class NewOfferPage implements OnInit {
   form: FormGroup;
 
-  constructor(private placeService: PlacesService,
+  constructor(private placesService: PlacesService,
               private router: Router,
               private loadingCtrl: LoadingController) { }
 
@@ -92,19 +93,26 @@ export class NewOfferPage implements OnInit {
     if (!this.form.valid || !this.form.get('image').value) { // check also if image is null (not set);
       return;
     }
-    console.log(this.form.value);
     this.loadingCtrl.create({
       message: 'Creating place...'
     }).then(loadingEl => {
       loadingEl.present();
-      this.placeService.addPlace( // returns an observable to which I subscribe;
-        this.form.value.title,
-        this.form.value.description,
-        +this.form.value.price,
-        new Date(this.form.value.dateFrom),
-        new Date(this.form.value.dateTo),
-        this.form.value.mapLocation
-      ).subscribe(() => {
+      this.placesService.uploadImage(this.form.get('image').value)
+      .pipe(
+        switchMap(uploadResponse => {
+        return this.placesService
+        .addPlace( // returns an observable to which I subscribe;
+          this.form.value.title,
+          this.form.value.description,
+          +this.form.value.price,
+          new Date(this.form.value.dateFrom),
+          new Date(this.form.value.dateTo),
+          this.form.value.mapLocation,
+          uploadResponse.imageUrl
+          );
+        })
+      )
+      .subscribe(() => {
         loadingEl.dismiss();
         this.form.reset();
         this.router.navigate(['/places/tabs/offers']);
